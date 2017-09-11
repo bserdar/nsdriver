@@ -33,7 +33,7 @@ const (
 var (
 	// overrideDriverFunc allows other modules to intercept driver
 	// construction to override driver functions
-	overrideDriverFunc func(*Driver)
+	overrideDriverFunc = func(*Driver) {}
 )
 
 // RegisterOverrideFunc registers a function that will be called after
@@ -155,9 +155,7 @@ func (f *nsDriverFactory) Create(parameters map[string]interface{}) (storagedriv
 	// We made it here. Set default implementation of functions, and let other driver override them
 	driver.TempFileFunc = LocalTempFileWriterFunc
 	driver.GetNameFunc = func(ctx context.Context, d *Driver, nm string) (string, bool) { return nm, false }
-	if overrideDriverFunc != nil {
-		overrideDriverFunc(&driver)
-	}
+	overrideDriverFunc(&driver)
 	return &driver, nil
 }
 
